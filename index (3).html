@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Photon Labs · Soluciones fotovoltaicas</title>
+<meta name="description" content="Photon Labs: dimensionamiento y cotización de sistemas solares para escuelas, hogares y negocios.">
+<link rel="icon" href="./logo.png">
+<style>
+  :root{--bg:#0b1220;--card:#121a2e;--line:#243050;--txt:#e8edf7;--mut:#8b97b3;--sun:#ffb81c}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--txt);line-height:1.5}
+  header{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;max-width:1100px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.25rem;letter-spacing:.5px}
+  .brand span{color:var(--sun)} .brand img{width:42px;height:42px}
+  .btn{background:var(--sun);color:#111;padding:12px 22px;border-radius:10px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+  .btn img{width:20px;height:20px;filter:brightness(0)}
+  .hero{max-width:1100px;margin:0 auto;padding:30px 28px 60px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+  .badge{display:inline-block;border:1px solid var(--sun);color:var(--sun);padding:6px 14px;border-radius:999px;font-size:.85rem;font-weight:600;margin-bottom:18px}
+  h1{font-size:clamp(2rem,5vw,3.2rem);line-height:1.1;margin:0 0 16px}
+  h1 span{color:var(--sun)}
+  .lead{color:var(--mut);font-size:1.1rem;margin:0 0 26px}
+  .hero img.visual{width:100%;border-radius:24px;border:1px solid var(--line)}
+  .feats{max-width:1100px;margin:0 auto;padding:0 28px 60px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+  .f{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .f img{width:44px;height:44px;margin-bottom:8px}
+  .f b{display:block;margin-bottom:4px}
+  .f p{margin:0;color:var(--mut);font-size:.9rem}
+  footer{border-top:1px solid var(--line);text-align:center;color:var(--mut);font-size:.8rem;padding:26px}
+  @media(max-width:800px){.hero{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><img src="./logo.png" alt="Logo Photon Labs">PHOTON <span>LABS</span></div>
+  <a class="btn" href="simulador.html">Abrir simulador</a>
+</header>
+
+<section class="hero">
+  <div>
+    <div class="badge">Próximamente en operaciones</div>
+    <h1>Energía solar <span>bien calculada</span>, propuesta clara.</h1>
+    <p class="lead">Convertimos el consumo de una escuela, un hogar o un negocio en un dimensionamiento fotovoltaico y una cotización preliminar con componentes reales, ahorro estimado y periodo de recuperación.</p>
+    <a class="btn" href="simulador.html"><img src="./rayo.png" alt="">Dimensionar mi sistema</a>
+  </div>
+  <img class="visual" src="./hero.png" alt="Ilustración de un panel solar, el sol y una batería">
+</section>
+
+<section class="feats">
+  <div class="f"><img src="./consumo.png" alt=""><b>Consumo</b><p>Inventario de cargas, kW y kWh.</p></div>
+  <div class="f"><img src="./paneles.png" alt=""><b>Paneles</b><p>Cantidad y arreglo serie/paralelo.</p></div>
+  <div class="f"><img src="./inversor.png" alt=""><b>Inversor y baterías</b><p>Compatibilidad eléctrica y autonomía.</p></div>
+  <div class="f"><img src="./economia.png" alt=""><b>Economía</b><p>Inversión, ahorro y retorno.</p></div>
+  <div class="f"><img src="./reporte.png" alt=""><b>Propuesta PDF</b><p>Documento listo para el cliente.</p></div>
+</section>
+
+<footer>Photon Labs S.A. de C.V. es un escenario académico simulado. Los resultados son preliminares y no constituyen un proyecto ejecutivo. · Consultor: Don Watt</footer>
+</body>
+</html>
