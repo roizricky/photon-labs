@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Photon Labs · Simulador Fotovoltaico</title>
+<style>
+  :root{--bg:#0b1220;--card:#121a2e;--line:#243050;--txt:#e8edf7;--mut:#8b97b3;--sun:#ffb81c;--ok:#3ddc97}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--txt)}
+  header{padding:20px 24px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .logo{font-weight:800;font-size:1.3rem;letter-spacing:.5px}
+  .logo span{color:var(--sun)}
+  .tag{color:var(--mut);font-size:.85rem}
+  nav{display:flex;gap:6px;padding:12px 24px;overflow-x:auto;border-bottom:1px solid var(--line)}
+  nav button{background:var(--card);color:var(--mut);border:1px solid var(--line);padding:9px 14px;border-radius:8px;cursor:pointer;white-space:nowrap;font-size:.9rem}
+  nav button.on{color:#111;background:var(--sun);border-color:var(--sun);font-weight:600}
+  main{max-width:960px;margin:0 auto;padding:24px}
+  section{display:none}
+  section.on{display:block}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px}
+  h2{margin:0 0 6px}
+  p.sub{color:var(--mut);margin:0 0 16px}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:7px 6px;text-align:left;border-bottom:1px solid var(--line);font-size:.9rem}
+  th{color:var(--mut);font-weight:600}
+  input{background:#0b1220;color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%}
+  td input[type=number]{max-width:100px}
+  button.act{background:var(--sun);color:#111;border:0;border-radius:8px;padding:8px 14px;font-weight:600;cursor:pointer}
+  button.del{background:none;border:0;color:#ff6b6b;cursor:pointer;font-size:1rem}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+  .kpi{background:#0b1220;border:1px solid var(--line);border-radius:10px;padding:14px}
+  .kpi b{display:block;font-size:1.5rem;color:var(--sun)}
+  .kpi small{color:var(--mut)}
+  .row{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin-bottom:14px}
+  .row label{font-size:.8rem;color:var(--mut);display:block;margin-bottom:4px}
+  .soon{border:1px dashed var(--line);border-radius:10px;padding:14px;color:var(--mut);font-size:.9rem}
+  code{background:#0b1220;padding:2px 6px;border-radius:5px;color:var(--ok)}
+  .ic{width:20px;height:20px;vertical-align:-4px}
+  h2 .ic{width:28px;height:28px;vertical-align:-6px}
+  nav button.on .ic{filter:brightness(0)}
+  footer{text-align:center;color:var(--mut);font-size:.78rem;padding:24px}
+</style>
+</head>
+<body>
+<header>
+  <div style="display:flex;align-items:center;gap:10px"><img class="mark" src="assets/logo.png" width="44" height="44" alt="Logo Photon Labs"><a href="index.html" style="text-decoration:none;color:inherit"><div class="logo">PHOTON <span>LABS</span></div></a></div>
+  <div class="tag">Simulador de dimensionamiento y cotización fotovoltaica · v0.2 (Etapa 1)</div>
+</header>
+
+<nav id="nav"></nav>
+
+<main>
+  <section id="consumo">
+    <div class="card">
+      <h2><img class="ic" src="assets/icons/consumo.png" alt=""> Consumo del aula</h2>
+      <p class="sub">Registra los equipos del salón. Potencia (kW) es la demanda instantánea; energía (kWh) es potencia × tiempo.</p>
+      <div class="row">
+        <div><label>Nombre del proyecto / aula</label><input id="proy" value="Aula 101"></div>
+        <div><label>Cliente</label><input id="cliente" placeholder="Nombre del cliente / escuela"></div>
+        <div><label>Consultor (firma)</label><input id="firma" value="Don Watt"></div>
+        <div><label>Días de uso al mes</label><input id="dias" type="number" value="22" min="1" max="31"></div>
+        <button class="act" id="preset">Cargar aula de ejemplo</button>
+        <button class="act" id="csv">Exportar CSV</button>
+        <button class="act" id="reset">Limpiar</button>
+      </div>
+      <table>
+        <thead><tr><th>Equipo</th><th>Cantidad</th><th>Potencia (W)</th><th>Horas/día</th><th>Energía (Wh/día)</th><th></th></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <p><button class="act" id="add">+ Agregar equipo</button></p>
+    </div>
+    <div class="card">
+      <div class="kpis">
+        <div class="kpi"><small>Demanda total instalada</small><b id="kP">0 kW</b></div>
+        <div class="kpi"><small>Energía diaria</small><b id="kD">0 kWh/día</b></div>
+        <div class="kpi"><small>Energía mensual</small><b id="kM">0 kWh/mes</b></div>
+        <div class="kpi"><small>Energía anual</small><b id="kA">0 kWh/año</b></div>
+      </div>
+      <p class="sub" style="margin-top:14px">Fórmulas: <code>P = Σ(cantidad × W) / 1000</code> · <code>E_día = Σ(cantidad × W × h) / 1000</code> · <code>E_mes = E_día × días</code></p>
+    </div>
+  </section>
+
+  <section id="paneles"><div class="card"><h2><img class="ic" src="assets/icons/paneles.png" alt=""> Paneles solares</h2><div class="soon">Semana 3. Entradas: horas solares pico (HSP) y pérdidas del sistema. Número de paneles ≈ E_día / (HSP × Wp × PR). Configuración serie/paralelo: V_string = Ns × Voc, I_array = Np × Isc.</div></div></section>
+  <section id="inversor"><div class="card"><h2><img class="ic" src="assets/icons/inversor.png" alt=""> Inversor</h2><div class="soon">Semana 4. Verificar potencia nominal, rango MPPT, Voc máx. (con corrección por baja temperatura) e Isc máx. de entrada.</div></div></section>
+  <section id="baterias"><div class="card"><h2><img class="ic" src="assets/icons/baterias.png" alt=""> Baterías</h2><div class="soon">Semana 4. Capacidad = E_autonomía / (DoD × η × V). Configuración serie/paralelo, con supuestos y límites explícitos.</div></div></section>
+  <section id="catalogo"><div class="card"><h2><img class="ic" src="assets/icons/catalogo.png" alt=""> Catálogo comercial</h2><div class="soon">Semana 3. Productos reales: marca, modelo, especificaciones, precio MXN, proveedor, enlace y fecha de consulta (catálogo local en JSON).</div></div></section>
+  <section id="economia"><div class="card"><h2><img class="ic" src="assets/icons/economia.png" alt=""> Evaluación económica</h2><div class="soon">Semana 4. Entrada: tarifa MXN/kWh. Inversión, ahorro anual = E_generada × tarifa, retorno simple = inversión / ahorro anual.</div></div></section>
+  <section id="reporte"><div class="card"><h2><img class="ic" src="assets/icons/reporte.png" alt=""> Reporte PDF</h2><div class="soon">Semana 5. Propuesta técnico-comercial: portada, resumen ejecutivo, consumo, sistema, componentes, presupuesto, ahorro, gráficas, anexos y limitaciones.</div></div></section>
+</main>
+
+<footer>Preparado por <b id="ft">Don Watt</b> · Photon Labs S.A. de C.V. es un escenario académico simulado. Resultados preliminares, no un proyecto ejecutivo.</footer>
+
+<script>
+const tabs=[["consumo","consumo|Consumo"],["paneles","paneles|Paneles"],["inversor","inversor|Inversor"],["baterias","baterias|Baterías"],["catalogo","catalogo|Catálogo"],["economia","economia|Economía"],["reporte","reporte|Reporte"]];
+const nav=document.getElementById("nav");
+tabs.forEach(([id,label],i)=>{
+  const b=document.createElement("button");const [ik,tx]=label.split("|");b.innerHTML=`<img class="ic" src="assets/icons/${ik}.png" alt=""> ${tx}`;b.onclick=()=>show(id);b.dataset.id=id;nav.appendChild(b);
+});
+function show(id){
+  document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id===id));
+  nav.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.id===id));
+}
+show("consumo");
+
+let equipos=[];
+const tbody=document.getElementById("tbody");
+const num=v=>Math.max(0,parseFloat(v)||0);
+
+function render(){
+  tbody.innerHTML="";
+  equipos.forEach((e,i)=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td><input value="${e.n}" data-i="${i}" data-k="n"></td>
+      <td><input type="number" min="0" value="${e.q}" data-i="${i}" data-k="q"></td>
+      <td><input type="number" min="0" value="${e.w}" data-i="${i}" data-k="w"></td>
+      <td><input type="number" min="0" step="0.5" max="24" value="${e.h}" data-i="${i}" data-k="h"></td>
+      <td id="wh${i}">${(e.q*e.w*e.h).toFixed(0)}</td>
+      <td><button class="del" data-del="${i}">✕</button></td>`;
+    tbody.appendChild(tr);
+  });
+  calc();
+}
+function calc(){
+  const dias=num(document.getElementById("dias").value);
+  const kW=equipos.reduce((s,e)=>s+e.q*e.w,0)/1000;
+  const kWhD=equipos.reduce((s,e)=>s+e.q*e.w*e.h,0)/1000;
+  document.getElementById("kP").textContent=kW.toFixed(2)+" kW";
+  document.getElementById("kD").textContent=kWhD.toFixed(2)+" kWh/día";
+  document.getElementById("kM").textContent=(kWhD*dias).toFixed(1)+" kWh/mes";
+  document.getElementById("kA").textContent=(kWhD*dias*10).toFixed(0)+" kWh/año";
+  equipos.forEach((e,i)=>{const c=document.getElementById("wh"+i);if(c)c.textContent=(e.q*e.w*e.h).toFixed(0)});
+}
+tbody.addEventListener("input",ev=>{
+  const t=ev.target,i=t.dataset.i,k=t.dataset.k;
+  if(i===undefined)return;
+  equipos[i][k]=k==="n"?t.value:num(t.value);
+  calc();
+});
+tbody.addEventListener("click",ev=>{
+  if(ev.target.dataset.del!==undefined){equipos.splice(+ev.target.dataset.del,1);render();}
+});
+document.getElementById("dias").addEventListener("input",calc);
+document.getElementById("add").onclick=()=>{equipos.push({n:"Nuevo equipo",q:1,w:100,h:1});render();};
+document.getElementById("preset").onclick=()=>{
+  equipos=[
+    {n:"Lámpara LED 18 W",q:8,w:18,h:8},
+    {n:"Ventilador de techo",q:3,w:60,h:6},
+    {n:"Proyector",q:1,w:250,h:5},
+    {n:"Computadora docente",q:1,w:120,h:6},
+    {n:"Minisplit 1 TR (promedio)",q:1,w:1200,h:6}
+  ];render();
+};
+render();
+
+/* ---- Etapa 1: guardado local, firma y exportación ---- */
+const KEY="photonlabs_v02";
+const ids=["proy","cliente","firma","dias"];
+function save(){try{localStorage.setItem(KEY,JSON.stringify({equipos,f:Object.fromEntries(ids.map(i=>[i,document.getElementById(i).value]))}))}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(!d)return;equipos=d.equipos||[];ids.forEach(i=>{if(d.f&&d.f[i]!==undefined)document.getElementById(i).value=d.f[i]})}catch(e){}}
+function sig(){document.getElementById("ft").textContent=document.getElementById("firma").value||"Consultor Photon Labs"}
+load();render();sig();
+document.addEventListener("input",()=>{sig();save()});
+document.addEventListener("click",()=>setTimeout(save,0));
+document.getElementById("reset").onclick=()=>{equipos=[];render();save()};
+document.getElementById("csv").onclick=()=>{
+  const q=v=>'"'+String(v).replace(/"/g,'""')+'"';
+  const rows=[["Equipo","Cantidad","Potencia_W","Horas_dia","Wh_dia"],...equipos.map(e=>[e.n,e.q,e.w,e.h,e.q*e.w*e.h])];
+  const blob=new Blob(["\ufeff"+rows.map(r=>r.map(q).join(",")).join("\n")],{type:"text/csv"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=(document.getElementById("proy").value||"aula")+".csv";a.click();
+};
+</script>
+</body>
+</html>
